@@ -19,7 +19,6 @@ class Web_Tool extends HTMLElement{
 
 		this.root = this.attachShadow({ mode: 'open' });
 		this.root.innerHTML = `
-
 			<style>				
 				.scroll-design {overflow:scroll;scrollbar-color:transparent var(--theme-white);scrollbar-width:thin}
 				.scroll-design.separate-body:hover {scrollbar-color:var(--theme-primary) transparent}
@@ -46,26 +45,27 @@ class Web_Tool extends HTMLElement{
 				.tab-menu li:has(input:checked){background:#fff;}
 				.tab-menu li:has(input:checked) path{fill:#37495b;}
 				.moveable-by-me{flex-grow:1;}
-				.tab-menu [type="radio"]{opacity:0;position:absolute;width:100%;height:100%;top:0;left:0;z-index:1;cursor:pointer;}
+				.tab-menu [type="radio"]{opacity:0;position:absolute;width:100%;height:100%;top:0;left:0;z-index:1;cursor:pointer;}		
 
 				.tab-contents{width:100%;flex-grow:1;overflow:auto;}
-				.tab-content{padding:8px;}
+				.tab-content{padding:8px;display:none;}
+				.tab-content.show{display:block;}
 			</style>
 
 			
 			<div class="tab">				
 				<header class="header">
 					<ul class="tab-menu">
-						<li class="tab-menu-item-file-css">
-							<input type="radio" name="web-tool-menu" checked>
+						<li class="tab-menu-item-file-css" >
+							<input type="radio" name="web-tool-menu" data-target="file-css">
 							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path d="M0 64C0 28.7 28.7 0 64 0L224 0l0 128c0 17.7 14.3 32 32 32l128 0 0 288c0 35.3-28.7 64-64 64L64 512c-35.3 0-64-28.7-64-64L0 64zm384 64l-128 0L256 0 384 128z"/></svg>
 						</li>
 						<li class="tab-menu-item-selector-css">
-							<input type="radio" name="web-tool-menu">
+							<input type="radio" name="web-tool-menu" checked data-target="selector-css">
 							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path d="M0 55.2L0 426c0 12.2 9.9 22 22 22c6.3 0 12.4-2.7 16.6-7.5L121.2 346l58.1 116.3c7.9 15.8 27.1 22.2 42.9 14.3s22.2-27.1 14.3-42.9L179.8 320l118.1 0c12.2 0 22.1-9.9 22.1-22.1c0-6.3-2.7-12.3-7.4-16.5L38.6 37.9C34.3 34.1 28.9 32 23.2 32C10.4 32 0 42.4 0 55.2z"/></svg>
 						</li>
 						<li class="tab-menu-item-settings">
-							<input type="radio" name="web-tool-menu">
+							<input type="radio" name="web-tool-menu" data-target="settings">
 							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M495.9 166.6c3.2 8.7 .5 18.4-6.4 24.6l-43.3 39.4c1.1 8.3 1.7 16.8 1.7 25.4s-.6 17.1-1.7 25.4l43.3 39.4c6.9 6.2 9.6 15.9 6.4 24.6c-4.4 11.9-9.7 23.3-15.8 34.3l-4.7 8.1c-6.6 11-14 21.4-22.1 31.2c-5.9 7.2-15.7 9.6-24.5 6.8l-55.7-17.7c-13.4 10.3-28.2 18.9-44 25.4l-12.5 57.1c-2 9.1-9 16.3-18.2 17.8c-13.8 2.3-28 3.5-42.5 3.5s-28.7-1.2-42.5-3.5c-9.2-1.5-16.2-8.7-18.2-17.8l-12.5-57.1c-15.8-6.5-30.6-15.1-44-25.4L83.1 425.9c-8.8 2.8-18.6 .3-24.5-6.8c-8.1-9.8-15.5-20.2-22.1-31.2l-4.7-8.1c-6.1-11-11.4-22.4-15.8-34.3c-3.2-8.7-.5-18.4 6.4-24.6l43.3-39.4C64.6 273.1 64 264.6 64 256s.6-17.1 1.7-25.4L22.4 191.2c-6.9-6.2-9.6-15.9-6.4-24.6c4.4-11.9 9.7-23.3 15.8-34.3l4.7-8.1c6.6-11 14-21.4 22.1-31.2c5.9-7.2 15.7-9.6 24.5-6.8l55.7 17.7c13.4-10.3 28.2-18.9 44-25.4l12.5-57.1c2-9.1 9-16.3 18.2-17.8C227.3 1.2 241.5 0 256 0s28.7 1.2 42.5 3.5c9.2 1.5 16.2 8.7 18.2 17.8l12.5 57.1c15.8 6.5 30.6 15.1 44 25.4l55.7-17.7c8.8-2.8 18.6-.3 24.5 6.8c8.1 9.8 15.5 20.2 22.1 31.2l4.7 8.1c6.1 11 11.4 22.4 15.8 34.3zM256 336a80 80 0 1 0 0-160 80 80 0 1 0 0 160z"/></svg>
 						</li>					
 					</ul>
@@ -73,24 +73,54 @@ class Web_Tool extends HTMLElement{
 				</header>
 				<div class="tab-contents scroll-design">
 					<div class="tab-content tab-content-file-css" contenteditable="true"></div>
-					<div class="tab-content tab-content-selector-css"></div>
+					<div class="tab-content tab-content-selector-css show">
+						<input type="number" data-prop-edit="font-size">
+					</div>
 					<div class="tab-content tab-content-settings"></div>
 				</div>
 			</div>
-			
 		`;	
-
 	}
 
 	connectedCallback(){
 		this.appendCSSContent();
 		this.componentMoveable();
+		this.handleChangeEvent();
+		this.handleInputEvent();
+
 	}
 
-	// append file css
+	// Change Event
+	handleChangeEvent(){
+		this.root.querySelector('.tab').addEventListener('change',(e)=>{
+			// Tab Menu
+			if(e.target.closest('.tab-menu')){
+				this.root.querySelectorAll('.tab-content').forEach((el)=>{
+					el.classList.remove('show');
+				})
+				this.root.querySelector(`.tab-content-${e.target.dataset.target}`).classList.add('show');
+			}
+		})
+	}
+
+	// Click Event
+	handleInputEvent(){
+		this.root.querySelector('.tab').addEventListener('input',(e)=>{
+			const t = e.target;
+
+			// CSS Prop
+			if(t.closest('[data-prop-edit]')){
+				this.setPropToSelectorElement(t);
+			}
+		})
+	}
+
+	// append file css on load
 	appendCSSContent(){
 		this.fetchCSSWithComments('http://localhost:8000/style.css').then(cssText => {
 		    this.root.querySelector('.tab-content-file-css').innerHTML = cssText.replaceAll('\n','<br>');		    		    
+		}).catch((err)=>{
+			console.log(err);
 		});
 	}
 	fetchCSSWithComments(fileUrl) {
@@ -103,7 +133,7 @@ class Web_Tool extends HTMLElement{
 	    })
 	    .then(cssText => cssText)
 	    .catch(error => {
-	      console.error(error);
+	      console.error('File path is wrong');
 	      return '';
 	    });
 	}
@@ -147,16 +177,21 @@ class Web_Tool extends HTMLElement{
 	}
 	moveableBoxUp(e){
 		this.moveableBox.active = false;        
-    	this.releasePointerCapture(e.pointerId);
-    
+    	this.releasePointerCapture(e.pointerId);    
 	}
+
+	setPropToSelectorElement(t){
+		console.log(t);
+	}
+
+
+
 
 }
 
 if(!customElements.get('web-tool')){
 	customElements.define('web-tool',Web_Tool);	
+	document.body.appendChild(document.createElement('web-tool'));
+	document.body.style.minHeight = '100vh';
 }
-
-document.body.appendChild(document.createElement('web-tool'));
-document.body.style.minHeight = '100vh';
 
