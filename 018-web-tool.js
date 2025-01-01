@@ -6,6 +6,7 @@ class Web_Tool extends HTMLElement{
 	constructor(){
 		super();
 
+		this.styleEl = null;
 		this.moveableBox = {
 			dX: 0,
 			dY: 0,
@@ -30,7 +31,7 @@ class Web_Tool extends HTMLElement{
 
 			<style>
 				*{margin:0;padding:0;box-sizing:border-box;transition:0.3s all linear;}
-				:host{width: 800px;display: block;resize:both;transition:none !important;overflow:hidden;position:absolute;top:25%;left:25%;}
+				:host{width: 800px;display: block;resize:both;transition:none !important;overflow:hidden;position:fixed;top:25%;left:25%;}
 				
 				.tab{width:100%;border:2px solid #37495b;background:#fff;display:flex;overflow: hidden;height:400px;flex-direction:column;}
 
@@ -82,12 +83,8 @@ class Web_Tool extends HTMLElement{
 		`;	
 	}
 
-	connectedCallback(){
-		this.appendCSSContent();
-		this.componentMoveable();
-		this.handleChangeEvent();
-		this.handleInputEvent();
-
+	connectedCallback(){		
+		this.init();
 	}
 
 	// Change Event
@@ -103,7 +100,7 @@ class Web_Tool extends HTMLElement{
 		})
 	}
 
-	// Click Event
+	// Input Event
 	handleInputEvent(){
 		this.root.querySelector('.tab').addEventListener('input',(e)=>{
 			const t = e.target;
@@ -111,6 +108,11 @@ class Web_Tool extends HTMLElement{
 			// CSS Prop
 			if(t.closest('[data-prop-edit]')){
 				this.setPropToSelectorElement(t);
+			}
+
+			// Editor
+			if(t.closest('.tab-content-file-css')){
+				this.liveUpdateEditorToCSS();
 			}
 		})
 	}
@@ -180,10 +182,43 @@ class Web_Tool extends HTMLElement{
     	this.releasePointerCapture(e.pointerId);    
 	}
 
+	// Live Update Editor To CSS
+	createStyleTagForCSSEditor(){
+		this.styleEl = document.createElement('STYLE');
+		document.body.appendChild(this.styleEl);
+	}
+	liveUpdateEditorToCSS(){
+		const editingTextNode = this.getTextNodeAtCursor();
+		if(editingTextNode.textContent.indexOf('{')==-1 && editingTextNode.textContent.indexOf('}')>=-1){
+			alert('Use one liner css');
+		}
+		this.styleEl.textContent += editingTextNode.textContent;
+	}
+	getTextNodeAtCursor() {
+	    const selection = window.getSelection();
+	    if (selection.rangeCount > 0) {
+	        const range = selection.getRangeAt(0);
+	        const container = range.startContainer;
+	        
+	        // Check if the container is a text node
+	        if (container.nodeType === Node.TEXT_NODE) {	        	
+	            return container;
+	        }
+	    }
+	    return null;
+	}
+	
 	setPropToSelectorElement(t){
 		console.log(t);
 	}
 
+	init(){
+		this.createStyleTagForCSSEditor();
+		this.appendCSSContent();
+		this.componentMoveable();
+		this.handleChangeEvent();
+		this.handleInputEvent();
+	}
 
 
 
