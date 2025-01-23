@@ -1,0 +1,76 @@
+<?php
+	$header_menus = wp_get_nav_menu_items($header_menu_id);
+?>
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+	<?php
+	if ( function_exists( 'the_custom_logo' ) ) {
+		the_custom_logo();
+	}
+	?>
+	<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+		<span class="navbar-toggler-icon"></span>
+	</button>
+
+	<div class="collapse navbar-collapse" id="navbarSupportedContent">
+		<?php
+			if(!empty($header_menus) && is_array($header_menus)){
+		?>		
+		<ul class="navbar-nav me-auto">
+			<?php
+
+				$parent_menus = $menu_class->get_parents_child_menus($header_menus);
+				
+				foreach($header_menus as $menu_item){
+
+					if($menu_item->menu_item_parent == 0){ // Non-parent menu item
+						
+						if (array_key_exists($menu_item->ID, $parent_menus)) { // Dropdown Menu
+							echo '
+								<li class="nav-item dropdown">
+									<a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+										'.esc_html($menu_item->title).'
+									</a>
+									<ul class="dropdown-menu">
+										'.$parent_menus[$menu_item->ID].'
+									</ul>
+								</li>
+							';
+
+						} else { // Non-parent menu item
+							echo '
+								<li class="nav-item">
+									<a class="nav-link" href="'.esc_url($menu_item->url).'">'.esc_html($menu_item->title).'</a>
+								</li>
+							';
+						}
+					}						
+				}
+				
+
+				
+			?>
+		</ul>
+		<?php } ?>
+		<form class="d-flex">
+			<input class="form-control me-sm-2" type="search" placeholder="Search" aria-label="Search">
+			<button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+		</form>
+	</div>
+</nav>
+
+<?php
+	public function get_parents_child_menus($header_menus){
+		$parent_menus = array();
+		foreach($header_menus as $menu_item){
+			if($menu_item->menu_item_parent > 0){
+				if (!array_key_exists($menu_item->menu_item_parent, $parent_menus)) $parent_menus[$menu_item->menu_item_parent] = '';
+				$parent_menus[$menu_item->menu_item_parent] .= '
+					<li>
+						<a class="dropdown-item" href="'.$menu_item->url.'">'.$menu_item->title.'</a>
+					</li>';
+				}
+		}
+		return $parent_menus;
+	}
+?>
