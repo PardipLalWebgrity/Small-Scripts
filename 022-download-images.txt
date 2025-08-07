@@ -1,0 +1,14 @@
+function downloadAllImages(){
+  const imageLinks = $0.querySelectorAll('.vcex-image-grid-entry-link');
+ imageLinks.forEach((imgLink)=>{
+  const aEl = document.createElement('a');
+    document.body.appendChild(aEl);
+    const imageName = imgLink.href.split('/').pop();
+    aEl.download = imageName;
+    aEl.href = imgLink.href;
+    aEl.click();
+    document.body.removeChild(aEl);
+		console.log(aEl.href)
+ })
+}
+downloadAllImages();
