@@ -1,0 +1,7 @@
+#!/bin/bash
+count=1
+for f in *.*; do
+    ext="${f##*.}"
+    mv -- "$f" "abc-$count.$ext"
+    count=$((count + 1))
+done

@@ -1,0 +1,9 @@
+(function openMultipleTabs() {
+  const urls = [
+    'https://example.com',
+    'https://google.com',
+    'https://github.com'
+  ];
+
+  urls.forEach(url => window.open(url, '_blank'));
+})();
